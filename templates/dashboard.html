@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Apollo Attendance Dashboard
+    </title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <div class="main-content">
+
+        <div class="header">
+
+            <h1>
+                APOLLO COMPUTER EDUCATION
+            </h1>
+
+            <p>
+                Kamarajar Salai Branch
+            </p>
+
+            <h3>
+                Current Date :
+                {{ current_date }}
+            </h3>
+
+            <div style="margin-top:20px;">
+
+                <a href="/logout">
+
+                    <button class="export-btn">
+
+                        Logout
+
+                    </button>
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- MONTH FILTER -->
+
+        <form method="GET">
+
+    <div class="month-filter">
+
+        <label>
+            Select Month :
+        </label>
+
+        <select name="month"
+                onchange="this.form.submit()">
+
+            {% for month in all_months %}
+
+            <option
+            value="{{ month.name }}"
+
+            {% if month.name == selected_month %}
+            selected
+            {% endif %}
+
+            {% if not month.enabled %}
+            disabled
+            {% endif %}
+
+            >
+
+            {{ month.name }} {{ current_year }}
+
+            {% if not month.enabled %}
+            🔒
+            {% endif %}
+
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+        <label style="margin-left:20px;">
+            Select Date :
+        </label>
+
+        <select name="date"
+                onchange="this.form.submit()">
+
+            <option value="">
+                All Dates
+            </option>
+
+            {% for date in available_dates %}
+
+            <option value="{{ date }}"
+            {% if date == selected_date %}
+            selected
+            {% endif %}
+            >
+
+            {{ date }}
+
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+</form>
+        <!-- EXPORT -->
+
+        <div class="export-section">
+
+            <a href="/export">
+
+                <button class="export-btn">
+
+                    Download Excel Report
+
+                </button>
+
+            </a>
+
+        </div>
+
+        <!-- CARDS -->
+
+        <div class="cards">
+
+            <div class="card red">
+                <h2>Total Staff</h2>
+                <p>{{ total_staff }}</p>
+            </div>
+
+            <div class="card blue">
+                <h2>Present</h2>
+                <p>{{ present_count }}</p>
+            </div>
+
+            <div class="card yellow">
+                <h2>Absent</h2>
+                <p>{{ absent_count }}</p>
+            </div>
+
+            <div class="card green">
+                <h2>Permission</h2>
+                <p>{{ permission_count }}</p>
+            </div>
+
+            <div class="card red">
+                <h2>Half Day</h2>
+                <p>{{ halfday_count }}</p>
+            </div>
+
+            <div class="card yellow">
+                <h2>Pending Checkout</h2>
+                <p>{{ pending_count }}</p>
+            </div>
+
+        </div>
+
+        <!-- TABLE -->
+
+        <div class="table-section">
+
+            <h2>
+                Staff Attendance Records
+            </h2>
+
+            <table>
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Check In</th>
+                    <th>Check Out</th>
+                    <th>Attendance</th>
+                    <th>Permission</th>
+                    <th>Reason</th>
+                    <th>Action</th>
+
+                </tr>
+
+                {% for row in records %}
+
+                <tr>
+
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                    <td>{{ row[4] }}</td>
+                    <td>{{ row[5] }}</td>
+                    <td>{{ row[6] }}</td>
+                    <td>{{ row[7] }}</td>
+
+                    <td>
+
+                        <a href="/delete/{{ row[0] }}"
+                           onclick="return confirm('Delete this record?')">
+
+                            Delete
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

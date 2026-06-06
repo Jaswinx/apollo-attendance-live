@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Apollo Manager Login
+    </title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="login-page">
+
+    <div class="login-card">
+
+        <h1>
+            APOLLO COMPUTER EDUCATION
+        </h1>
+
+        <h3>
+            Kamarajar Salai Branch
+        </h3>
+
+        <p class="login-title">
+            Manager Dashboard Login
+        </p>
+
+        {% if error %}
+
+        <div class="error-box">
+
+            {{ error }}
+
+        </div>
+
+        {% endif %}
+
+        <form method="POST">
+
+            <label>
+                Username
+            </label>
+
+            <input
+                type="text"
+                name="username"
+                required
+                placeholder="Enter Username">
+
+            <label>
+                Password
+            </label>
+
+            <input
+                type="password"
+                name="password"
+                required
+                placeholder="Enter Password">
+
+            <button type="submit">
+
+                Login
+
+            </button>
+
+        </form>
+
+        <a href="/">
+
+            <button class="back-btn">
+
+                Back To Attendance
+
+            </button>
+
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

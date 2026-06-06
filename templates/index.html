@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Apollo Staff Attendance
+    </title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="main-container">
+
+    <div class="attendance-card">
+
+        <div class="top-bar">
+
+            <h1>
+                APOLLO COMPUTER EDUCATION
+            </h1>
+
+            <h3>
+                Keelavasal Branch
+            </h3>
+
+            <p>
+                Apollo Staff Attendance Management System
+            </p>
+
+        </div>
+
+        {% if success %}
+
+        <div class="success-box">
+
+            ✓ Attendance Submitted Successfully
+
+        </div>
+
+        {% endif %}
+
+        <div id="location-blocked"
+     style="display:none;
+            text-align:center;
+            padding:20px;
+            background:#ffebee;
+            border:1px solid red;
+            border-radius:10px;
+            margin-bottom:20px;">
+
+    <h2 style="color:red;">
+        Unauthorized Location
+    </h2>
+
+    <p>
+        Attendance can only be marked from
+        Keelavasal, Madurai.
+    </p>
+
+</div>
+        <form method="POST"
+        id="attendanceForm"
+        style="display:none;">
+
+            <label>
+                Select Staff
+            </label>
+
+            <select name="name" required>
+
+                <option value="" selected disabled>
+                    Select Staff
+                </option>
+
+                {% for staff in staff_list %}
+
+                <option value="{{ staff }}">
+                    {{ staff }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+            <label>
+                Attendance Type
+            </label>
+
+            <select name="status"
+                    id="status"
+                    onchange="showFields()"
+                    required>
+
+                <option value="" selected disabled>
+                    Select Attendance Type
+                </option>
+
+                <option value="Check In">
+                    Check In
+                </option>
+
+                <option value="Check Out">
+                    Check Out
+                </option>
+
+                <option value="Half Day">
+                    Half Day
+                </option>
+
+                <option value="Permission">
+                    Permission
+                </option>
+
+            </select>
+
+            <div id="permission-box"
+                 style="display:none;">
+
+                <label>
+                    Permission Duration
+                </label>
+
+                <select name="permission_time">
+
+                    <option value="30 Minutes">
+                        30 Minutes
+                    </option>
+
+                    <option value="1 Hour">
+                        1 Hour
+                    </option>
+
+                    <option value="2 Hours">
+                        2 Hours
+                    </option>
+
+                </select>
+
+                <label>
+                    Permission Reason
+                </label>
+
+                <textarea
+                    name="reason"
+                    placeholder="Enter Permission Reason">
+                </textarea>
+
+            </div>
+
+            <button type="submit">
+
+                Submit Attendance
+
+            </button>
+
+        </form>
+
+        <br>
+
+    </div>
+
+</div>
+
+<script>
+
+const OFFICE_LAT = 9.9172271;
+const OFFICE_LON = 78.1285373;
+const ALLOWED_RADIUS = 150;
+
+function showFields(){
+
+    let status =
+    document.getElementById("status").value;
+
+    let permissionBox =
+    document.getElementById("permission-box");
+
+    if(status === "Permission"){
+
+        permissionBox.style.display = "block";
+
+    }
+
+    else{
+
+        permissionBox.style.display = "none";
+
+    }
+}
+
+function getDistance(lat1, lon1, lat2, lon2){
+
+    const R = 6371000;
+
+    const dLat =
+    (lat2 - lat1) * Math.PI / 180;
+
+    const dLon =
+    (lon2 - lon1) * Math.PI / 180;
+
+    const a =
+    Math.sin(dLat/2) * Math.sin(dLat/2)
+    +
+    Math.cos(lat1*Math.PI/180)
+    *
+    Math.cos(lat2*Math.PI/180)
+    *
+    Math.sin(dLon/2)
+    *
+    Math.sin(dLon/2);
+
+    const c =
+    2 * Math.atan2(
+        Math.sqrt(a),
+        Math.sqrt(1-a)
+    );
+
+    return R * c;
+}
+
+function verifyLocation(){
+
+    if(!navigator.geolocation){
+
+        document.getElementById(
+            "location-blocked"
+        ).style.display = "block";
+
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+
+        function(position){
+
+            let userLat =
+            position.coords.latitude;
+
+            let userLon =
+            position.coords.longitude;
+
+            let distance =
+            getDistance(
+                userLat,
+                userLon,
+                OFFICE_LAT,
+                OFFICE_LON
+            );
+
+            if(distance <= ALLOWED_RADIUS){
+
+                document.getElementById(
+                    "attendanceForm"
+                ).style.display = "block";
+
+                document.getElementById(
+                    "location-blocked"
+                ).style.display = "none";
+            }
+
+            else{
+
+                document.getElementById(
+                    "attendanceForm"
+                ).style.display = "none";
+
+                document.getElementById(
+                    "location-blocked"
+                ).style.display = "block";
+            }
+        },
+
+        function(){
+
+            document.getElementById(
+                "attendanceForm"
+            ).style.display = "none";
+
+            document.getElementById(
+                "location-blocked"
+            ).style.display = "block";
+        }
+
+    );
+}
+
+window.onload = verifyLocation;
+
+</script>
+
+</body>
+</html>
