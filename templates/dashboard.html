@@ -2,19 +2,104 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apollo Attendance Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .qr-section {
+            background: linear-gradient(135deg, #0d1b4b, #1a3a8f);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+        .qr-section h2 {
+            width: 100%;
+            text-align: center;
+            color: white;
+            margin: 0 0 10px 0;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
 
-    <title>
-        Apollo Attendance Dashboard
-    </title>
+        .qr-box {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            min-width: 200px;
+        }
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
+        .qr-box.staff { border-top: 5px solid #1a237e; }
+        .qr-box.manager { border-top: 5px solid #b71c1c; }
 
+        .qr-box h3 {
+            margin: 0 0 4px 0;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .qr-box p {
+            margin: 0 0 12px 0;
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        .qr-box img {
+            width: 150px;
+            height: 150px;
+            border-radius: 8px;
+            background: #f5f5f5;
+            padding: 8px;
+        }
+
+        .live-dot {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            background: #4caf50;
+            border-radius: 50%;
+            margin-right: 5px;
+            animation: pulse 1.5s infinite;
+        }
+
+        .live-tag {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4caf50;
+            font-size: 0.72rem;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.3); }
+        }
+
+        .open-qr-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            text-decoration: none;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+
+        .open-qr-btn:hover {
+            background: rgba(255,255,255,0.25);
+        }
+    </style>
 </head>
 
 <body>
@@ -24,170 +109,120 @@
     <div class="main-content">
 
         <div class="header">
-
-            <h1>
-                APOLLO COMPUTER EDUCATION
-            </h1>
-
-            <p>
-                Kamarajar Salai Branch
-            </p>
-
-            <h3>
-                Current Date :
-                {{ current_date }}
-            </h3>
-
+            <h1>APOLLO COMPUTER EDUCATION</h1>
+            <p>Keelavasal Branch</p>
+            <h3>Current Date : {{ current_date }}</h3>
             <div style="margin-top:20px;">
-
                 <a href="/logout">
-
-                    <button class="export-btn">
-
-                        Logout
-
-                    </button>
-
+                    <button class="export-btn">Logout</button>
                 </a>
+            </div>
+        </div>
 
+        <!-- =============================== -->
+        <!-- QR CODES SECTION -->
+        <!-- =============================== -->
+
+        <div class="qr-section">
+            <h2>📱 Live QR Codes — Scan Station</h2>
+
+            <div class="qr-box staff">
+                <h3>👨‍💼 Staff Attendance</h3>
+                <p>Check-In / Check-Out</p>
+                <img src="/qr/attendance" alt="Staff QR">
+                <div class="live-tag">
+                    <span class="live-dot"></span> Live QR
+                </div>
             </div>
 
+            <div class="qr-box manager">
+                <h3>🔐 Manager Dashboard</h3>
+                <p>Login & View Reports</p>
+                <img src="/qr/dashboard" alt="Manager QR">
+                <div class="live-tag">
+                    <span class="live-dot"></span> Live QR
+                </div>
+            </div>
+
+            <div style="width:100%; text-align:center;">
+                <a href="/qr-display" target="_blank" class="open-qr-btn">
+                    🖥️ Open Full QR Display Page
+                </a>
+            </div>
         </div>
 
         <!-- MONTH FILTER -->
 
         <form method="GET">
+            <div class="month-filter">
+                <label>Select Month :</label>
+                <select name="month" onchange="this.form.submit()">
+                    {% for month in all_months %}
+                    <option value="{{ month.name }}"
+                        {% if month.name == selected_month %}selected{% endif %}
+                        {% if not month.enabled %}disabled{% endif %}>
+                        {{ month.name }} {{ current_year }}
+                        {% if not month.enabled %}🔒{% endif %}
+                    </option>
+                    {% endfor %}
+                </select>
 
-    <div class="month-filter">
+                <label style="margin-left:20px;">Select Date :</label>
+                <select name="date" onchange="this.form.submit()">
+                    <option value="">All Dates</option>
+                    {% for date in available_dates %}
+                    <option value="{{ date }}"
+                        {% if date == selected_date %}selected{% endif %}>
+                        {{ date }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
 
-        <label>
-            Select Month :
-        </label>
-
-        <select name="month"
-                onchange="this.form.submit()">
-
-            {% for month in all_months %}
-
-            <option
-            value="{{ month.name }}"
-
-            {% if month.name == selected_month %}
-            selected
-            {% endif %}
-
-            {% if not month.enabled %}
-            disabled
-            {% endif %}
-
-            >
-
-            {{ month.name }} {{ current_year }}
-
-            {% if not month.enabled %}
-            🔒
-            {% endif %}
-
-            </option>
-
-            {% endfor %}
-
-        </select>
-
-        <label style="margin-left:20px;">
-            Select Date :
-        </label>
-
-        <select name="date"
-                onchange="this.form.submit()">
-
-            <option value="">
-                All Dates
-            </option>
-
-            {% for date in available_dates %}
-
-            <option value="{{ date }}"
-            {% if date == selected_date %}
-            selected
-            {% endif %}
-            >
-
-            {{ date }}
-
-            </option>
-
-            {% endfor %}
-
-        </select>
-
-    </div>
-
-</form>
         <!-- EXPORT -->
 
         <div class="export-section">
-
             <a href="/export">
-
-                <button class="export-btn">
-
-                    Download Excel Report
-
-                </button>
-
+                <button class="export-btn">Download Excel Report</button>
             </a>
-
         </div>
 
         <!-- CARDS -->
 
         <div class="cards">
-
             <div class="card red">
                 <h2>Total Staff</h2>
                 <p>{{ total_staff }}</p>
             </div>
-
             <div class="card blue">
                 <h2>Present</h2>
                 <p>{{ present_count }}</p>
             </div>
-
             <div class="card yellow">
                 <h2>Absent</h2>
                 <p>{{ absent_count }}</p>
             </div>
-
             <div class="card green">
                 <h2>Permission</h2>
                 <p>{{ permission_count }}</p>
             </div>
-
             <div class="card red">
                 <h2>Half Day</h2>
                 <p>{{ halfday_count }}</p>
             </div>
-
             <div class="card yellow">
                 <h2>Pending Checkout</h2>
                 <p>{{ pending_count }}</p>
             </div>
-
         </div>
 
         <!-- TABLE -->
 
         <div class="table-section">
-
-            <h2>
-                Staff Attendance Records
-            </h2>
-
+            <h2>Staff Attendance Records</h2>
             <table>
-
                 <tr>
-
                     <th>ID</th>
                     <th>Name</th>
                     <th>Date</th>
@@ -197,13 +232,9 @@
                     <th>Permission</th>
                     <th>Reason</th>
                     <th>Action</th>
-
                 </tr>
-
                 {% for row in records %}
-
                 <tr>
-
                     <td>{{ row[0] }}</td>
                     <td>{{ row[1] }}</td>
                     <td>{{ row[2] }}</td>
@@ -212,24 +243,15 @@
                     <td>{{ row[5] }}</td>
                     <td>{{ row[6] }}</td>
                     <td>{{ row[7] }}</td>
-
                     <td>
-
                         <a href="/delete/{{ row[0] }}"
                            onclick="return confirm('Delete this record?')">
-
                             Delete
-
                         </a>
-
                     </td>
-
                 </tr>
-
                 {% endfor %}
-
             </table>
-
         </div>
 
     </div>
