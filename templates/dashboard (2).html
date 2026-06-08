@@ -38,44 +38,22 @@
         .qr-box.staff { border-top: 5px solid #1a237e; }
         .qr-box.manager { border-top: 5px solid #b71c1c; }
 
-        .qr-box h3 {
-            margin: 0 0 4px 0;
-            font-size: 0.9rem;
-            color: #333;
-        }
-
-        .qr-box p {
-            margin: 0 0 12px 0;
-            font-size: 0.75rem;
-            color: #888;
-        }
-
+        .qr-box h3 { margin: 0 0 4px 0; font-size: 0.9rem; color: #333; }
+        .qr-box p { margin: 0 0 12px 0; font-size: 0.75rem; color: #888; }
         .qr-box img {
-            width: 150px;
-            height: 150px;
-            border-radius: 8px;
-            background: #f5f5f5;
-            padding: 8px;
+            width: 150px; height: 150px;
+            border-radius: 8px; background: #f5f5f5; padding: 8px;
         }
 
         .live-dot {
-            display: inline-block;
-            width: 7px;
-            height: 7px;
-            background: #4caf50;
-            border-radius: 50%;
-            margin-right: 5px;
-            animation: pulse 1.5s infinite;
+            display: inline-block; width: 7px; height: 7px;
+            background: #4caf50; border-radius: 50%;
+            margin-right: 5px; animation: pulse 1.5s infinite;
         }
 
         .live-tag {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #4caf50;
-            font-size: 0.72rem;
-            font-weight: 600;
-            margin-top: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: #4caf50; font-size: 0.72rem; font-weight: 600; margin-top: 8px;
         }
 
         @keyframes pulse {
@@ -88,24 +66,25 @@
             background: rgba(255,255,255,0.15);
             color: white;
             border: 1px solid rgba(255,255,255,0.4);
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 0.82rem;
-            text-decoration: none;
-            margin-top: 10px;
-            transition: background 0.2s;
+            padding: 8px 20px; border-radius: 20px;
+            font-size: 0.82rem; text-decoration: none;
+            margin-top: 10px; transition: background 0.2s;
         }
 
-        .open-qr-btn:hover {
-            background: rgba(255,255,255,0.25);
-        }
+        .open-qr-btn:hover { background: rgba(255,255,255,0.25); }
+
+        .status-present { color: #2e7d32; font-weight: bold; }
+        .status-absent { color: #c62828; font-weight: bold; }
+        .status-permission { color: #e65100; font-weight: bold; }
+        .status-halfday { color: #f57f17; font-weight: bold; }
+        .status-pending { color: #1565c0; font-weight: bold; }
+        .status-checkedout { color: #4caf50; font-weight: bold; }
     </style>
 </head>
 
 <body>
 
 <div class="dashboard">
-
     <div class="main-content">
 
         <div class="header">
@@ -113,37 +92,25 @@
             <p>Keelavasal Branch</p>
             <h3>Current Date : {{ current_date }}</h3>
             <div style="margin-top:20px;">
-                <a href="/logout">
-                    <button class="export-btn">Logout</button>
-                </a>
+                <a href="/logout"><button class="export-btn">Logout</button></a>
             </div>
         </div>
 
-        <!-- =============================== -->
-        <!-- QR CODES SECTION -->
-        <!-- =============================== -->
-
+        <!-- QR CODES -->
         <div class="qr-section">
             <h2>📱 Live QR Codes — Scan Station</h2>
-
             <div class="qr-box staff">
                 <h3>👨‍💼 Staff Attendance</h3>
                 <p>Check-In / Check-Out</p>
                 <img src="/qr/attendance" alt="Staff QR">
-                <div class="live-tag">
-                    <span class="live-dot"></span> Live QR
-                </div>
+                <div class="live-tag"><span class="live-dot"></span> Live QR</div>
             </div>
-
             <div class="qr-box manager">
                 <h3>🔐 Manager Dashboard</h3>
                 <p>Login & View Reports</p>
                 <img src="/qr/dashboard" alt="Manager QR">
-                <div class="live-tag">
-                    <span class="live-dot"></span> Live QR
-                </div>
+                <div class="live-tag"><span class="live-dot"></span> Live QR</div>
             </div>
-
             <div style="width:100%; text-align:center;">
                 <a href="/qr-display" target="_blank" class="open-qr-btn">
                     🖥️ Open Full QR Display Page
@@ -152,7 +119,6 @@
         </div>
 
         <!-- MONTH FILTER -->
-
         <form method="GET">
             <div class="month-filter">
                 <label>Select Month :</label>
@@ -181,15 +147,11 @@
         </form>
 
         <!-- EXPORT -->
-
         <div class="export-section">
-            <a href="/export">
-                <button class="export-btn">Download Excel Report</button>
-            </a>
+            <a href="/export"><button class="export-btn">Download Excel Report</button></a>
         </div>
 
         <!-- CARDS -->
-
         <div class="cards">
             <div class="card red">
                 <h2>Total Staff</h2>
@@ -215,10 +177,13 @@
                 <h2>Pending Checkout</h2>
                 <p>{{ pending_count }}</p>
             </div>
+            <div class="card blue">
+                <h2>Checked Out</h2>
+                <p>{{ checkedout_count }}</p>
+            </div>
         </div>
 
         <!-- TABLE -->
-
         <div class="table-section">
             <h2>Staff Attendance Records</h2>
             <table>
@@ -229,6 +194,7 @@
                     <th>Check In</th>
                     <th>Check Out</th>
                     <th>Attendance</th>
+                    <th>Checkout Status</th>
                     <th>Permission</th>
                     <th>Reason</th>
                     <th>Action</th>
@@ -240,9 +206,28 @@
                     <td>{{ row[2] }}</td>
                     <td>{{ row[3] }}</td>
                     <td>{{ row[4] }}</td>
-                    <td>{{ row[5] }}</td>
-                    <td>{{ row[6] }}</td>
+                    <td>
+                        {% if row[5] == "Present" %}
+                        <span class="status-present">✅ Present</span>
+                        {% elif row[5] == "Half Day" %}
+                        <span class="status-halfday">🌓 Half Day</span>
+                        {% elif row[5] == "Permission" %}
+                        <span class="status-permission">🕐 Permission</span>
+                        {% else %}
+                        {{ row[5] }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if row[6] == "Pending Checkout" %}
+                        <span class="status-pending">⏳ Pending Checkout</span>
+                        {% elif row[6] == "Checked Out" %}
+                        <span class="status-checkedout">✅ Checked Out</span>
+                        {% else %}
+                        {{ row[6] }}
+                        {% endif %}
+                    </td>
                     <td>{{ row[7] }}</td>
+                    <td>{{ row[8] }}</td>
                     <td>
                         <a href="/delete/{{ row[0] }}"
                            onclick="return confirm('Delete this record?')">
@@ -255,7 +240,6 @@
         </div>
 
     </div>
-
 </div>
 
 </body>
