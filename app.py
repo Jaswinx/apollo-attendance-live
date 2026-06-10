@@ -43,6 +43,7 @@ staff_list = [
     "Pradeepa Dharshini (Accounts Trainer)",
     "Manimegalai Lakshmi (Multimedia & Accounts Trainer)",
     "Sinisha (Software Trainer)",
+    "Parkavi (Telecaller)"
     "Jeyamena (Software Trainer)",
     "Swathi (Telecaller)",
     "Shailaja (Telecaller)",
